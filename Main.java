@@ -126,15 +126,19 @@ public class Main{
         while(numOfNodes < 2 || numOfNodes > 7){
             System.out.println("Enter how many nodes there will be in this game (2-7): ");
             
+            // Validate if user gives an integer input
+            while(!sc.hasNextInt()){
+                String dump = sc.next();
+                System.out.println(dump + " is not a valid integer. Please enter how many nodes there will be in this game (2-7): ");
+            }
+
             numOfNodes = sc.nextInt();
             // If given an invalid number give descriptive error message, others wise print how many nodes the user inputed
             if(numOfNodes < 2 || numOfNodes > 7){
                 System.out.println("Invalid input for number of nodes.");
             }
-            else{
-                System.out.println("Number of nodes inputed: " + numOfNodes);
-            }
         }
+        System.out.println("Number of nodes inputed: " + numOfNodes);
         
         // Create node objects using a for loop based on number of nodes wanted
         Node graph[] = new Node[numOfNodes];
@@ -149,17 +153,22 @@ public class Main{
             String inputNode = "";  // Label
             while(inputNode.length() != 1 || graphNodes.contains(inputNode)){
                 System.out.print("Label the " + i + " node with a single character: ");
+                // Make sure the user does not input a integer instead of a character
+                while(sc.hasNextInt()){
+                    int dump = sc.nextInt();
+                    System.out.print(dump + " is not a valid character. Label the " + i + " node with a single character: ");
+                }
                 inputNode = sc.next();
-                inputNode = inputNode.toLowerCase();
+                inputNode = inputNode.toLowerCase();    // Since we are only dealing with lower case letter change to lower case
 
+                // Validate that the user has only entered a single character, otherwise see if the character name is already in use, other wise set node name to given character
                 if(inputNode.length() != 1){
-                    System.out.println("You entered more or less then one character. Please try again." + inputNode);
+                    System.out.println("You entered more or less then one character. Please try again. " + inputNode);
                 }else if(graphNodes.contains(inputNode)){
                     System.out.println("The node character has already been used. Please try again");
                 }else{
-                    //System.out.println("Node " + i + " has been labeled " + inputNode);
                     graph[i].setName(inputNode);
-                    graphNodes += inputNode;
+                    graphNodes += inputNode;    // Increment the amount of nodes
                     break;
                 }
             }
@@ -167,10 +176,18 @@ public class Main{
         }
 
         // Get amount of edges
-        int numOfEdges = 0;
+        int numOfEdges = 0;     // Number of edges in graph
+        // While user has not enter an amount of edges greater than or equal to nodes - 1
         while(numOfEdges < numOfNodes - 1){
-            System.out.println("Enter the number of edges for this game, must more then or equal to the number of nodes - 1: ");
+            System.out.print("Enter the number of edges for this game, must more then or equal to the number of nodes - 1: ");
+            
+            // Get user input and validate its a char
+            while(!sc.hasNextInt()){
+                String dump = sc.next();
+                System.out.print(dump + " is not a valid integer.Enter the number of edges for this game, must more then or equal to the number of nodes - 1: ");
+            }
             numOfEdges = sc.nextInt();
+            // Print error message if given a number too small
             if(numOfEdges < numOfNodes - 1){
                 System.out.println("The number of entered edges is too few");
             }            
@@ -178,30 +195,46 @@ public class Main{
 
         // Assign dollar values to each node
         for(int i = 0; i < numOfNodes; i++){
-            System.out.println("Enter the dollar amout for node " + graph[i].getName() + ": ");
-            int inputDollars = sc.nextInt();
+            System.out.print("Enter the dollar amout for node " + graph[i].getName() + ": ");
+            // Validate that given input is an integer
+            while(!sc.hasNextInt()){
+                String dump = sc.next();
+                System.out.print(dump + " is not a valid integer. Enter the dollar amout for node " + graph[i].getName() + ": ");
+            }
+            int inputDollars = sc.nextInt();        // User input of amount of dollars
+            
+            // Set dollars of this node
             graph[i].setDollars(inputDollars);
         }
 
-        // Connect nodes
+        // Connect edges for each edge, user could get stuck here if they give give an amount of edges too many for example 2 edges for a 2 node graph
         for(int i = 0; i < numOfEdges; i++){
-            String givenConnection = "";
-            boolean nodeConnected = false;
+            String givenConnection = "";        // User input of 2 nodes they want to connect
+            boolean nodeConnected = false;      // Flag for if the given ndoes have been connect successfully
+
+            // while nodeConnect flag is false
             while(!nodeConnected){
-                System.out.println("Please enter two nodes you would like to connect: ");
+                System.out.print("Please enter two nodes you would like to connect: ");
+                // Validate given input are not integers
+                while(sc.hasNextInt()){
+                    int dump = sc.nextInt();
+                    System.out.print(dump + " is not a valid input. Please enter two nodes you would like to connect: ");
+                }
                 givenConnection = sc.next();
-                givenConnection = givenConnection.toLowerCase();
+                givenConnection = givenConnection.toLowerCase();    // Since we are only dealing with lower case letter change to lower case
 
                 // Validate only two nodes are given
                 if(givenConnection.length() == 2){
+                    // Seperate letters so we can assign to nodes
                     String firstLetter = givenConnection.substring(0, 1);
                     String secondLetter = givenConnection.substring(1, 2);
-                    System.out.println("First letter: " + firstLetter + " second letter: " + secondLetter);
+                    //System.out.println("First letter: " + firstLetter + " second letter: " + secondLetter);
+                    // Check to see if the two letters are the same
                     if(firstLetter.equals(secondLetter)){
                         System.out.println("You cannot connect a node to itself. Please try again");
                     }
+                    // Otherwise if nodes given are nodes that exist
                     else if(graphNodes.contains(firstLetter) && graphNodes.contains(secondLetter)){
-                        System.out.println("here");
                         // If both nodes given are valid find the nodes that are releavent
                         for(int j = 0; j < numOfNodes; j++){
                             // Find first node given and try to connect nodes
@@ -210,7 +243,9 @@ public class Main{
                                 if(graph[j].setConnectedNodes(secondLetter)){
                                     // Nodes are successfully connect mark flag saying an edge has been created
                                     nodeConnected = true;
-                                }else{
+                                }
+                                // Otherwise give error message
+                                else{
                                     System.out.println("Nodes " + givenConnection + " have already been connected");
                                 }
                             }
@@ -220,7 +255,9 @@ public class Main{
                                 if(graph[j].setConnectedNodes(firstLetter)){
                                     // Nodes are successfully connect mark flag saying an edge has been created
                                     nodeConnected = true;
-                                }else{
+                                }
+                                // Give error message
+                                else{
                                     System.out.println("Nodes " + givenConnection + " have already been connected");
                                 }
                             }
@@ -236,38 +273,66 @@ public class Main{
         }
 
         // Game starts here
-        String gameCommand = "";
+        String gameCommand = "";       // Command user will give, q/Q or node
+        // While user has not input Q
         while(gameCommand != "q"){
+            // Display nodes in graph, their dollar values and their connections
             for(int i = 0; i < numOfNodes; i++){
                 System.out.println("Node " + graph[i].getName() + " has " + graph[i].getDollars() + " dollars" + " and is connected to: " + graph[i].getConnectedNodes());
             }
-            System.out.println("Please select a command from the following:\n Q/q: Quit the game\n Any letter of a node");
+
+            System.out.print("Please select a command from the following:\n Q/q: Quit the game\n Any letter of a node: ");
+            // Validate input is not an integer
+            while(sc.hasNextInt()){
+                int dump = sc.nextInt();
+                System.out.print(dump + " is not a valid input. Please select a command from the following:\n Q/q: Quit the game\n Any letter of a node: ");
+            }
+
             gameCommand = sc.next();
-            gameCommand = gameCommand.toLowerCase();
+            gameCommand = gameCommand.toLowerCase();    // Turn to lower case for simplicity sake
             // Make sure only one letter command is given
             if(gameCommand.length() == 1){
+                // If user inputs q, quit game
                 if(gameCommand.contains("q")){
                     break;
-                }else if(graphNodes.contains(gameCommand)){
-                    System.out.println("Please select wether you would like to give or take from node" + gameCommand);
+                }
+                // If user inputs a valid node
+                else if(graphNodes.contains(gameCommand)){
+                    System.out.println("Please select wether you would like to give or take from node " + gameCommand);
                     System.out.println("(G/g):Give\n(T/t):Take");
-                    String giveTake = "a";
+                    String giveTake = "a";  // User input for either give or take command
+                    
+                    // While user has not input g/G or t/T
                     while(!giveTake.contains("g") || !giveTake.contains("t")){
+                        // Validate user does not give an int
+                        while(sc.hasNextInt()){
+                            int dump = sc.nextInt();
+                            System.out.print(dump + " is not a valid integer. Please select wether you would like to give or take from node " + gameCommand);
+                            System.out.println("(G/g):Give\n(T/t):Take");
+                        }
+
                         giveTake = sc.next();
-                        giveTake = giveTake.toLowerCase();
+                        giveTake = giveTake.toLowerCase();  // Change to lower case for simplicity sake
+
+                        // If user input is g or t
                         if(giveTake.contains("g") || giveTake.contains("t")){
+                            // If g is given, use give command
                             if(giveTake.contains("g")){
                                 graph = give(gameCommand, graph, numOfNodes);
                                 break;
-                            }else{
+                            }
+                            // Other wise take command
+                            else{
                                 graph = take(gameCommand, graph, numOfNodes);
                                 break;
                             }
-                        }else{
+                        }
+                        else{
                             System.out.println("Invalid letter given " + giveTake+ "Please try again.");
                         }
                     }
-                }else{
+                }
+                else{
                     System.out.println("Please enter a valid game command, q or a valid node");
                 }
             }
@@ -278,7 +343,6 @@ public class Main{
             // Check win
             checkWin(graph, numOfNodes);
         }
-
-        sc.close();
+        sc.close(); // Close scanner
     }
 }
