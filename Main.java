@@ -60,7 +60,7 @@ class Node {
 
 public class Main{
     // This function will calculate max amount of edges
-    public static int maxEdges(int numOfNodes){
+    static int maxEdges(int numOfNodes){
         int total = 1;  // Total amount of max edges
         // For i is less the number of nodes
         for(int i = 2; i < numOfNodes; i++){
@@ -69,7 +69,7 @@ public class Main{
         return total;
     }
     // This function will find a given node, and give money to node connected to it
-    public static Node [] give(String giveNode, Node [] graph, int numOfNodes){
+    static Node [] give(String giveNode, Node [] graph, int numOfNodes){
         // Search through array of node objects to find given node
         for(int i = 0; i < numOfNodes; i++){
             // When node is successfully found
@@ -90,7 +90,7 @@ public class Main{
     }
 
     // This function will find a given node and take money from nodes around it
-    public static Node [] take(String takeNode, Node [] graph, int numOfNodes){
+    static Node [] take(String takeNode, Node [] graph, int numOfNodes){
         // Search through array of node objects to find given node
         for(int i = 0; i < numOfNodes; i++){
             // When node is successfully found
@@ -111,7 +111,7 @@ public class Main{
     }
 
     // This function checks to see if a winner
-    public static void checkWin(Node [] graph, int numOfNodes){
+    static void checkWin(Node [] graph, int numOfNodes){
         // Flag that says if a user has won a game
         boolean winFlag = true;
         // Go through each node and see if any of them are a negative amount of dollars
@@ -129,7 +129,7 @@ public class Main{
     }
     public static void main(String[] args){
         // Introduction statement / Description of program
-        System.out.println("This is a game called the dollar game. You will give instructions to construct a graph, then assign values to each node. Your goal is to get all nodes to have 0 or more dollars by giving and taking from nodes. Good luck!")
+        System.out.println("This is a game called the dollar game. You will give instructions to construct a graph, then assign values to each node. Your goal is to get all nodes to have 0 or more dollars by giving and taking from nodes. Good luck!");
         Scanner sc = new Scanner(System.in);    // Scanner that will be used to get user inputs
         int numOfNodes = 0;
 
@@ -162,7 +162,7 @@ public class Main{
         // Go through each node so the user can assign them a label
         for(int i = 0; i < numOfNodes; i++){
             String inputNode = "";  // Label
-            while(inputNode.length() != 1 || graphNodes.contains(inputNode)){
+            while(inputNode.length() != 1 || graphNodes.contains(inputNode) || !inputNode.matches("^[a-zA-Z]*$")){
                 System.out.print("Label the " + i + " node with a single character: ");
                 // Make sure the user does not input a integer instead of a character
                 while(sc.hasNextInt()){
@@ -177,7 +177,10 @@ public class Main{
                     System.out.println("You entered more or less then one character. Please try again. " + inputNode);
                 }else if(graphNodes.contains(inputNode)){
                     System.out.println("The node character has already been used. Please try again");
-                }else{
+                }else if(!inputNode.matches("^[a-zA-Z]*$")){
+                    System.out.println("You entered a non alphabetic character. Please try again");
+                }
+                else{
                     graph[i].setName(inputNode);
                     graphNodes += inputNode;    // Increment the amount of nodes
                     break;
@@ -189,8 +192,8 @@ public class Main{
         // Get amount of edges
         int numOfEdges = 0;     // Number of edges in graph
         // While user has not enter an amount of edges greater than or equal to nodes - 1
-        while(numOfEdges < numOfNodes - 1 || numOfEdges < maxEdges(numOfNodes)){
-            System.out.print("Enter the number of edges for this game, must more then or equal to the number of nodes - 1: ");
+        while(numOfEdges < numOfNodes - 1 || numOfEdges > maxEdges(numOfNodes)){
+            System.out.print("Enter the number of edges for this game, must more then or equal to " + (numOfNodes - 1) + " or less then or equal to " + maxEdges(numOfNodes) + ": ");
             
             // Get user input and validate its a char
             while(!sc.hasNextInt()){
@@ -203,7 +206,7 @@ public class Main{
                 System.out.println("The number of entered edges is too few");
             }
             // else if the number entered it too many edges
-            else if(numOfEdges > maxEdges(numOfNodes){
+            else if(numOfEdges > maxEdges(numOfNodes)){
                 System.out.println("The number of edges is too many");
             }           
         }
@@ -289,6 +292,7 @@ public class Main{
 
         // Game starts here
         String gameCommand = "";       // Command user will give, q/Q or node
+        int numOfTurns = 0;
         // While user has not input Q
         while(gameCommand != "q"){
             // Display nodes in graph, their dollar values and their connections
@@ -318,7 +322,7 @@ public class Main{
                     String giveTake = "a";  // User input for either give or take command
                     
                     // While user has not input g/G or t/T
-                    while(!giveTake.contains("g") || !giveTake.contains("t")){
+                    while(!giveTake.contains("g") || !giveTake.contains("t") || giveTake.length() != 1){
                         // Validate user does not give an int
                         while(sc.hasNextInt()){
                             int dump = sc.nextInt();
@@ -328,9 +332,11 @@ public class Main{
 
                         giveTake = sc.next();
                         giveTake = giveTake.toLowerCase();  // Change to lower case for simplicity sake
-
+                        if(giveTake.length() != 1){
+                            System.out.println("Please only enter on command");
+                        }
                         // If user input is g or t
-                        if(giveTake.contains("g") || giveTake.contains("t")){
+                        else if(giveTake.contains("g") || giveTake.contains("t")){
                             // If g is given, use give command
                             if(giveTake.contains("g")){
                                 graph = give(gameCommand, graph, numOfNodes);
@@ -354,10 +360,13 @@ public class Main{
             else{
                 System.out.println("Invalid command given. Please only type one letter");
             }
+            numOfTurns++;
 
             // Check win
             checkWin(graph, numOfNodes);
         }
+        
+        System.out.println("You took " + numOfTurns + " before you quit the game.");
         sc.close(); // Close scanner
     }
 }
