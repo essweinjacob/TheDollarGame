@@ -128,6 +128,8 @@ public class Main{
         }
     }
     public static void main(String[] args){
+        // Introduction statement / Description of program
+        System.out.println("This is a game called the dollar game. You will give instructions to construct a graph, then assign values to each node. Your goal is to get all nodes to have 0 or more dollars by giving and taking from nodes. Good luck!")
         Scanner sc = new Scanner(System.in);    // Scanner that will be used to get user inputs
         int numOfNodes = 0;
 
