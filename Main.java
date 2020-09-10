@@ -59,6 +59,15 @@ class Node {
 }
 
 public class Main{
+    // This function will calculate max amount of edges
+    public static int maxEdges(int numOfNodes){
+        int total = 1;  // Total amount of max edges
+        // For i is less the number of nodes
+        for(int i = 2; i < numOfNodes; i++){
+            total += i; // Add i to total
+        }
+        return total;
+    }
     // This function will find a given node, and give money to node connected to it
     public static Node [] give(String giveNode, Node [] graph, int numOfNodes){
         // Search through array of node objects to find given node
@@ -178,19 +187,23 @@ public class Main{
         // Get amount of edges
         int numOfEdges = 0;     // Number of edges in graph
         // While user has not enter an amount of edges greater than or equal to nodes - 1
-        while(numOfEdges < numOfNodes - 1){
+        while(numOfEdges < numOfNodes - 1 || numOfEdges < maxEdges(numOfNodes)){
             System.out.print("Enter the number of edges for this game, must more then or equal to the number of nodes - 1: ");
             
             // Get user input and validate its a char
             while(!sc.hasNextInt()){
                 String dump = sc.next();
-                System.out.print(dump + " is not a valid integer.Enter the number of edges for this game, must more then or equal to the number of nodes - 1: ");
+                System.out.print(dump + " is not a valid integer.Enter the number of edges for this game, must more then or equal to the number of nodes - 1 and less then or equal to" + maxEdges(numOfNodes) + ": ");
             }
             numOfEdges = sc.nextInt();
             // Print error message if given a number too small
             if(numOfEdges < numOfNodes - 1){
                 System.out.println("The number of entered edges is too few");
-            }            
+            }
+            // else if the number entered it too many edges
+            else if(numOfEdges > maxEdges(numOfNodes){
+                System.out.println("The number of edges is too many");
+            }           
         }
 
         // Assign dollar values to each node
